@@ -21,6 +21,7 @@ public class RnMasterpassPackage implements ReactPackage {
         return null;
     }
 
+
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return Collections.emptyList();
