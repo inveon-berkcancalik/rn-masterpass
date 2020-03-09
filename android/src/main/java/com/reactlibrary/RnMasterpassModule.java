@@ -41,7 +41,7 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
         MasterpassMerchant.initialize(config, new MasterpassInitCallback() {
             @Override
             public void onInitSuccess() {
-                masterpassInitCallback.invoke();
+                masterpassInitCallback.invoke(true);
             }
 
             @Override

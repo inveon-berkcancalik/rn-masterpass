@@ -1,7 +1,7 @@
 {
   "name": "react-native-rn-masterpass",
   "title": "React Native Rn Masterpass",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Masterpass Android SDK ReactNative Wrapper",
   "main": "index.js",
   "scripts": {
