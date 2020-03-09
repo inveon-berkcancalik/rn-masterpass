@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableMap;
 import com.mastercard.mp.checkout.MasterpassError;
 import com.mastercard.mp.checkout.MasterpassInitCallback;
 import com.mastercard.mp.checkout.MasterpassMerchant;
@@ -26,15 +27,15 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initialize(InitalConfig _config, final Callback masterpassInitCallback) {
+    public void initialize(ReadableMap _config, final Callback masterpassInitCallback) {
 
         MasterpassMerchantConfiguration config = new MasterpassMerchantConfiguration.Builder()
                 .setContext(getReactApplicationContext()) //context
-                .setEnvironment(_config.getEnvironment()) //environment
+                .setEnvironment(_config.getString("environment")) //environment
                 .setLocale(new Locale("tr","TR")) //locale
-                .setMerchantName(_config.getMerchantName())
-                .setExpressCheckoutEnabled(_config.getExpressCheckoutEnabled())//if merchant is express enabled
-                .setCheckoutId(_config.getCheckoutId())
+                .setMerchantName(_config.getString("merchantName"))
+                .setExpressCheckoutEnabled(_config.getBoolean("expressCheckoutEnabled"))//if merchant is express enabled
+                .setCheckoutId(_config.getString("checkoutId"))
                 .build();
 
         MasterpassMerchant.initialize(config, new MasterpassInitCallback() {
