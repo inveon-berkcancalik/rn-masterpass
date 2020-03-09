@@ -9,6 +9,8 @@ import com.mastercard.mp.checkout.MasterpassInitCallback;
 import com.mastercard.mp.checkout.MasterpassMerchant;
 import com.mastercard.mp.checkout.MasterpassMerchantConfiguration;
 
+import java.util.Locale;
+
 public class RnMasterpassModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
@@ -24,7 +26,17 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initialize(MasterpassMerchantConfiguration config, final Callback masterpassInitCallback) {
+    public void initialize(InitalConfig _config, final Callback masterpassInitCallback) {
+
+        MasterpassMerchantConfiguration config = new MasterpassMerchantConfiguration.Builder()
+                .setContext(getReactApplicationContext()) //context
+                .setEnvironment(_config.getEnvironment()) //environment
+                .setLocale(new Locale("tr","TR")) //locale
+                .setMerchantName(_config.getMerchantName())
+                .setExpressCheckoutEnabled(_config.getExpressCheckoutEnabled())//if merchant is express enabled
+                .setCheckoutId(_config.getCheckoutId())
+                .build();
+
         MasterpassMerchant.initialize(config, new MasterpassInitCallback() {
             @Override
             public void onInitSuccess() {
