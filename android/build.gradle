@@ -57,6 +57,9 @@ android {
 
 repositories {
     // ref: https://www.baeldung.com/maven-local-repository
+    flatDir {
+        dirs 'libs'
+    }
     mavenLocal()
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -71,7 +74,9 @@ repositories {
 }
 
 dependencies {
-    //noinspection GradleDynamicVersion
+    api fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation(name: 'masterpass-merchant-2.8.2', ext:'aar')
     implementation 'com.facebook.react:react-native:+'  // From node_modules
 }
 
