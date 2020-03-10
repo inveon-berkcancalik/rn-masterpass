@@ -33,9 +33,14 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void initialize(ReadableMap config) {
         service = new MasterPassServices(getReactApplicationContext(), config.getString("phone"));
-        //service.setMsisdn(config.getString("phone"));
+
+        if (config.getBoolean("sandbox")) {
+            MasterPassInfo.setUrl("https://test.masterpassturkiye.com/MasterpassJsonServerHandler/v2/");
+        }
+
         MasterPassInfo.setClientID(config.getString("clientId"));
         MasterPassInfo.setLanguage(config.getString("language"));
+
         MasterPassInfo.setMacroMerchantId(config.getString("macroMerchantId"));
     }
 
