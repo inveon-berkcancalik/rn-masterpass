@@ -83,10 +83,6 @@ dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation(name: 'Masterpass-v2.2.5', ext:'aar')
-    implementation(name: 'switchservices-1.0.0', ext:'aar')
-
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     implementation 'com.facebook.react:react-native:+'  // From node_modules
 }
