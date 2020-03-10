@@ -1,5 +1,7 @@
 package com.reactlibrary;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -43,6 +45,7 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void initialize(ReadableMap config) {
+        Log.d("MASTERPASS_initialize", new Gson().toJson(config));
         service = new MasterPassServices(getReactApplicationContext(), config.getString("phone"));
 
         if (config.getBoolean("sandbox")) {
@@ -58,6 +61,9 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void checkMasterpass(String token, String referenceNo, final Callback callback)
     {
+        Log.d("MP_checkMasterpass1", token);
+        Log.d("MP_checkMasterpass2", referenceNo);
+
         service.checkMasterPass(token, referenceNo, new CheckMasterPassListener() {
             @Override
             public void onSuccess(CheckMasterPassResult checkMasterPassResult) {
