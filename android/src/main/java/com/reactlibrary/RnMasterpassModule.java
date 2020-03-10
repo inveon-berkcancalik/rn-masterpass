@@ -58,8 +58,7 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void checkMasterpass(String token, String referenceNo, final Callback callback)
     {
-        MasterPassServices s = new MasterPassServices(getReactApplicationContext(), "msisdn");
-        s.checkMasterPass(token, referenceNo, new CheckMasterPassListener() {
+        service.checkMasterPass(token, referenceNo, new CheckMasterPassListener() {
             @Override
             public void onSuccess(CheckMasterPassResult checkMasterPassResult) {
                 try {
