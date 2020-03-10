@@ -5,6 +5,17 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import cardtek.masterpass.MasterPassServices;
 import cardtek.masterpass.interfaces.CheckMasterPassListener;
 import cardtek.masterpass.interfaces.GetCardsListener;
@@ -51,17 +62,32 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
         s.checkMasterPass(token, referenceNo, new CheckMasterPassListener() {
             @Override
             public void onSuccess(CheckMasterPassResult checkMasterPassResult) {
-                callback.invoke(checkMasterPassResult);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(checkMasterPassResult));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#1 JSONObject parsing error.");
+                }
             }
 
             @Override
             public void onServiceError(ServiceError serviceError) {
-                callback.invoke(serviceError);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(serviceError));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#2 JSONObject parsing error.");
+                }
             }
 
             @Override
             public void onInternalError(InternalError internalError) {
-                callback.invoke(internalError);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(internalError));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#3 JSONObject parsing error.");
+                }
             }
         });
     }
@@ -72,17 +98,32 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
         service.getCards(token, referanceNo, new GetCardsListener() {
             @Override
             public void onSuccess(GetCardsResult getCardsResult) {
-                callback.invoke(getCardsResult);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(getCardsResult));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#4 JSONObject parsing error.");
+                }
             }
 
             @Override
             public void onServiceError(ServiceError serviceError) {
-                callback.invoke(serviceError);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(serviceError));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#5 JSONObject parsing error.");
+                }
             }
 
             @Override
             public void onInternalError(InternalError internalError) {
-                callback.invoke(internalError);
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(internalError));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#6 JSONObject parsing error.");
+                }
             }
         });
     }
