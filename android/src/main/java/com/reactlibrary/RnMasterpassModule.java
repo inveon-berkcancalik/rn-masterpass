@@ -17,12 +17,12 @@ import cardtek.masterpass.util.MasterPassInfo;
 public class RnMasterpassModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
-    private final MasterPassServices service;
+    private MasterPassServices service;
 
     public RnMasterpassModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        this.service = new MasterPassServices(reactContext, "");
+        //this.service = new MasterPassServices(reactContext, "");
     }
 
     @Override
@@ -32,7 +32,8 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void initialize(ReadableMap config) {
-        service.setMsisdn(config.getString("phone"));
+        service = new MasterPassServices(getReactApplicationContext(), config.getString("phone"));
+        //service.setMsisdn(config.getString("phone"));
         MasterPassInfo.setClientID(config.getString("clientId"));
         MasterPassInfo.setLanguage(config.getString("language"));
         MasterPassInfo.setMacroMerchantId(config.getString("macroMerchantId"));
