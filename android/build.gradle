@@ -82,6 +82,7 @@ repositories {
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation(name: 'Masterpass-v2.2.5', ext:'aar')
 
     implementation 'com.facebook.react:react-native:+'  // From node_modules
