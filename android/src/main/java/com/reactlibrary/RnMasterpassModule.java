@@ -22,13 +22,17 @@ import java.util.Map;
 import cardtek.masterpass.MasterPassServices;
 import cardtek.masterpass.attributes.MasterPassEditText;
 import cardtek.masterpass.interfaces.CheckMasterPassListener;
+import cardtek.masterpass.interfaces.DeleteCardListener;
 import cardtek.masterpass.interfaces.GetCardsListener;
 import cardtek.masterpass.interfaces.PurchaseListener;
 import cardtek.masterpass.interfaces.RegisterCardListener;
+import cardtek.masterpass.nfc.MasterPassNfcReaderListener;
 import cardtek.masterpass.response.InternalError;
+import cardtek.masterpass.response.NfcReaderResult;
 import cardtek.masterpass.response.ServiceError;
 import cardtek.masterpass.response.ServiceResult;
 import cardtek.masterpass.results.CheckMasterPassResult;
+import cardtek.masterpass.results.DeleteCardResult;
 import cardtek.masterpass.results.GetCardsResult;
 import cardtek.masterpass.results.PurchaseResult;
 import cardtek.masterpass.results.RegisterCardResult;
@@ -51,7 +55,7 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initialize(ReadableMap config) {
+    public void initialize(ReadableMap config, final Callback callback) {
         service = new MasterPassServices(getReactApplicationContext(), config.getString("phone"));
 
         if (config.getString("env").toLowerCase().equals("uatui")){
@@ -65,6 +69,33 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
         MasterPassInfo.setClientID(config.getString("clientId"));
         MasterPassInfo.setLanguage(config.getString("language"));
         MasterPassInfo.setMacroMerchantId(config.getString("macroMerchantId"));
+
+        service.startNfcReader(getCurrentActivity(), new MasterPassNfcReaderListener() {
+            @Override
+            public void onCardReadFail() {
+                callback.invoke();
+            }
+
+            @Override
+            public void onCardReadSuccess(NfcReaderResult nfcReaderResult) {
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(nfcReaderResult));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#NFC1 JSONObject parsing error.");
+                }
+            }
+
+            @Override
+            public void onInternalError(InternalError internalError) {
+                try {
+                    JSONObject obj = new JSONObject(new Gson().toJson(internalError));
+                    callback.invoke(JsonConvert.jsonToReact(obj));
+                } catch (JSONException e) {
+                    callback.invoke("#NFC2 JSONObject parsing error.");
+                }
+            }
+        });
     }
 
     @ReactMethod
@@ -76,8 +107,6 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
                 try {
                     JSONObject obj = new JSONObject(new Gson().toJson(checkMasterPassResult));
                     callback.invoke(JsonConvert.jsonToReact(obj));
-
-
                 } catch (JSONException e) {
                     callback.invoke("#1 JSONObject parsing error.");
                 }
@@ -142,9 +171,11 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void purchase(String token, String referanceNo, String cardName, String orderNo, int amount, final Callback callback)
+    public void purchase(String token, String referanceNo, String cardName, String orderNo, float amount, final Callback callback)
     {
-        service.purchase(token, cardName, (amount*100), orderNo, referanceNo, new PurchaseListener() {
+        float total = amount * 100;
+
+        service.purchase(token, cardName, Math.round(total), orderNo, referanceNo, new PurchaseListener() {
             @Override
             public void onSuccess(PurchaseResult purchaseResult) {
                 try {
@@ -188,31 +219,16 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void register(String token, String cardNumber, int expireMonth, int expireYear,
-                         String cardName, String referenceNo, final Callback callback)
+    public void deleteCard(String cardName, String token, String referanceNo, final Callback callback)
     {
-        MasterPassEditText editText = new MasterPassEditText(getReactApplicationContext());
-        editText.setText(cardNumber); //CRASH
-
-
-        service.registerCard(token, editText, expireMonth, expireYear, cardName, referenceNo, null, new RegisterCardListener() {
+        service.deleteCard(token, cardName, referanceNo, new DeleteCardListener() {
             @Override
-            public void onSuccess(RegisterCardResult registerCardResult) {
+            public void onSuccess(DeleteCardResult deleteCardResult) {
                 try {
-                    JSONObject obj = new JSONObject(new Gson().toJson(registerCardResult));
+                    JSONObject obj = new JSONObject(new Gson().toJson(deleteCardResult));
                     callback.invoke(JsonConvert.jsonToReact(obj));
                 } catch (JSONException e) {
-                    callback.invoke("#11 JSONObject parsing error.");
-                }
-            }
-
-            @Override
-            public void onVerifyUser(ServiceResult serviceResult) {
-                try {
-                    JSONObject obj = new JSONObject(new Gson().toJson(serviceResult));
-                    callback.invoke(JsonConvert.jsonToReact(obj));
-                } catch (JSONException e) {
-                    callback.invoke("#12 JSONObject parsing error.");
+                    callback.invoke("deleteCard.onSuccess JSONObject parsing error.");
                 }
             }
 
@@ -222,7 +238,7 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
                     JSONObject obj = new JSONObject(new Gson().toJson(serviceError));
                     callback.invoke(JsonConvert.jsonToReact(obj));
                 } catch (JSONException e) {
-                    callback.invoke("#13 JSONObject parsing error.");
+                    callback.invoke("deleteCard.onServiceError JSONObject parsing error.");
                 }
             }
 
@@ -232,10 +248,9 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
                     JSONObject obj = new JSONObject(new Gson().toJson(internalError));
                     callback.invoke(JsonConvert.jsonToReact(obj));
                 } catch (JSONException e) {
-                    callback.invoke("#14 JSONObject parsing error.");
+                    callback.invoke("deleteCard.onInternalError JSONObject parsing error.");
                 }
             }
         });
     }
-
 }
