@@ -54,10 +54,12 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     public void initialize(ReadableMap config) {
         service = new MasterPassServices(getReactApplicationContext(), config.getString("phone"));
 
-        if (config.getString("env").equals("uatui")){
+        if (config.getString("env").toLowerCase().equals("uatui")){
             MasterPassInfo.setUrl("https://uatui.masterpassturkiye.com/v2");
-        } else if(config.getString("env").equals("test")) {
+        } else if(config.getString("env").toLowerCase().equals("test")) {
             MasterPassInfo.setUrl("https://test.masterpassturkiye.com/MasterpassJsonServerHandler/v2");
+        } else if(config.getString("env").toLowerCase().equals("prod")) {
+            MasterPassInfo.setUrl("https://masterpassturkiye.com/v2");
         }
 
         MasterPassInfo.setClientID(config.getString("clientId"));
@@ -140,9 +142,9 @@ public class RnMasterpassModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void purchase(String token, String referanceNo, String cardName, final Callback callback)
+    public void purchase(String token, String referanceNo, String cardName, String orderNo, int amount, final Callback callback)
     {
-        service.purchase(token, cardName, 1, "TEST", referanceNo, new PurchaseListener() {
+        service.purchase(token, cardName, (amount*100), orderNo, referanceNo, new PurchaseListener() {
             @Override
             public void onSuccess(PurchaseResult purchaseResult) {
                 try {
