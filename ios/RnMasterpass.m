@@ -84,7 +84,6 @@ RCT_EXPORT_METHOD(getCards:(NSString *)token referenceNo:(NSString *)refNo callb
             NSLog(@"Got an error: %@", error);
         } else {
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            NSLog(@"FUCK %@", jsonString);
             anyCallback(@[[NSString stringWithFormat: @"%@", jsonString]]);
         }
     } else {
@@ -100,7 +99,6 @@ RCT_EXPORT_METHOD(purchase:(NSString *)token referenceNo:(NSString *)refno cardN
     numberToFloat = numberToFloat * 100;
     int floatToInt = ceil(numberToFloat);
     NSString *strTotal = [NSString stringWithFormat:@"%d", floatToInt];
-    NSLog(@"%@", strTotal);
     [mfsLib pay:cardName token:token amount:strTotal cvv:nil orderId:orderNo payCallback:@selector(purchaseCallBack:) payTarget:self];
 }
 
